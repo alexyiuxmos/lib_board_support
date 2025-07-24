@@ -89,7 +89,8 @@ void xk_audio_316_mc_ab_board_setup(const xk_audio_316_mc_ab_config_t &config)
     /* Drive control port to turn on 3V3 and mclk direction appropriately.
      * Bits set to low will be high-z, pulled down */
     const unsigned pll_sel_mclk_dir = (CLK_CS2100 == config.clk_mode) ? 0x00 : 0x80;
-    p_ctrl <: pll_sel_mclk_dir | 0x20;
+    //p_ctrl <: pll_sel_mclk_dir | 0x20;
+    p_ctrl <: 0x80 | 0x20;
 
     /* Wait for power supplies to be up and stable */
     delay_milliseconds(10);
@@ -286,6 +287,7 @@ void xk_audio_316_mc_ab_AudioHwInit(i2c_cli i2c, const xk_audio_316_mc_ab_config
 
     // Wait for power supply to come up.
     delay_milliseconds(100);
+    return;
 
     if(CLK_CS2100 == config.clk_mode)
     {
@@ -493,6 +495,7 @@ void xk_audio_316_mc_ab_AudioHwInit(i2c_cli i2c, const xk_audio_316_mc_ab_config
 /* Configures the external audio hardware for the required sample frequency */
 void xk_audio_316_mc_ab_AudioHwConfig(i2c_cli i2c, const xk_audio_316_mc_ab_config_t &config, unsigned samFreq, unsigned mClk, unsigned dsdMode, unsigned sampRes_DAC, unsigned sampRes_ADC)
 {
+    return;
     WriteAllDacRegs(i2c, PCM5122_MUTE,           0x11); // Soft Mute both channels
     delay_milliseconds(3);  // Wait for mute to take effect. This takes 104 samples, this is 2.4ms @ 44.1kHz. So lets say 3ms to cover everything.
     WriteAllDacRegs(i2c, PCM5122_STANDBY_PWDN,   0x10); // Request standby mode while we change regs
