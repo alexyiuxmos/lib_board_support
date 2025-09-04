@@ -31,8 +31,11 @@
 /** Define representing XK-ETH-XU316-DUAL-100M board */
 #define XK_ETH_XU316_DUAL_100M      5
 
+/** Define representing XK-VOICE-SQ66 board */
+#define XK_VOICE_SQ66                6
+
 /** Total number of boards supported by the library */
-#define BOARD_SUPPORT_N_BOARDS      6  // max board + 1
+#define BOARD_SUPPORT_N_BOARDS      7  // max board + 1
 
 /** Define that should be set to the current board type in use
   *
