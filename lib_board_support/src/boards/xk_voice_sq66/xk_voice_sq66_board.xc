@@ -79,7 +79,7 @@ port p_sda = PORT_I2C_SDA;
 //    }
 //}
 
-void xk_voice_sq66_board_setup(const xk_voice_sq66_config_t &config)
+void bsp_board_setup(const bsp_config_t &config)
 {
 
     /* "Drive high mode" - drive high for 1, non-driving for 0 */
@@ -98,12 +98,12 @@ void xk_voice_sq66_board_setup(const xk_voice_sq66_config_t &config)
 }
 
 
-void xk_voice_sq66_i2c_master(server interface i2c_master_if i2c[1])
+void bsp_i2c_master(server interface i2c_master_if i2c[1])
 {
     i2c_master(i2c, 1, p_scl, p_sda, 100);
 }
 
-void xk_voice_sq66_i2c_master_exit(i2c_cli i2c)
+void bsp_i2c_master_exit(i2c_cli i2c)
 {
     i2c.shutdown();
 }
@@ -185,7 +185,7 @@ static void WriteRegs(i2c_cli i2c, int deviceAddr, int numDevices, int regAddr, 
 }
 
 /* Configures the external audio hardware at startup */
-void xk_voice_sq66_AudioHwInit(i2c_cli i2c, const xk_voice_sq66_config_t &config)
+void bsp_AudioHwInit(i2c_cli i2c, const bsp_config_t &config)
 {
     i2c_regop_res_t result;
 
@@ -257,13 +257,13 @@ void xk_voice_sq66_AudioHwInit(i2c_cli i2c, const xk_voice_sq66_config_t &config
 }
 
 /* Configures the external audio hardware for the required sample frequency */
-void xk_voice_sq66_AudioHwConfig(i2c_cli i2c, const xk_voice_sq66_config_t &config, unsigned samFreq, unsigned mClk, unsigned dsdMode, unsigned sampRes_DAC, unsigned sampRes_ADC)
+void bsp_AudioHwConfig(i2c_cli i2c, const bsp_config_t &config, unsigned samFreq, unsigned mClk, unsigned dsdMode, unsigned sampRes_DAC, unsigned sampRes_ADC)
 {
 //    sw_pll_fixed_clock(mClk);
 }
 
 
-void xk_voice_sq66_AudioHwShutdown(i2c_cli i2c)
+void bsp_AudioHwShutdown(i2c_cli i2c)
 {
     /* Set external I2C mux to DACs/ADCs */
 //    SetI2CMux(i2c, PCA9540B_CTRL_CHAN_0);
@@ -273,7 +273,7 @@ void xk_voice_sq66_AudioHwShutdown(i2c_cli i2c)
 //    WriteAllDacRegs(i2c, PCM5122_STANDBY_PWDN,   0x10); // Request standby mode for DAC
 }
 
-void xk_voice_sq66_AudioHwPowerdown(void)
+void bsp_AudioHwPowerdown(void)
 {
     /* Turn off 3v3 and 5v power supplies using board SUSPEND_N signal */
     /* Note, xcore 3v3 (3v3X) remains on */

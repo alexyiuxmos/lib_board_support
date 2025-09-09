@@ -26,7 +26,7 @@ typedef enum {
     CLK_FIXED,
     CLK_CS2100,
     CLK_PLL
-} xk_voice_sq66_mclk_modes_t;
+} bsp_mclk_modes_t;
 
 /** 
  * @brief Formats supported by the DAC and ADC. Either I2S using multiple data lines or TDM
@@ -35,7 +35,7 @@ typedef enum {
 typedef enum {
     AUD_316_PCM_FORMAT_I2S,
     AUD_316_PCM_FORMAT_TDM
-} xk_voice_sq66_pcm_format_t;
+} bsp_pcm_format_t;
 
 /** 
  * @brief Voltage settings supported for the xcore core supply. Set by xk_voice_sq66_core_voltage_set().
@@ -46,7 +46,7 @@ typedef enum {
     AUD_316_XCORE_VOLTAGE_0_9V,
     AUD_316_XCORE_VOLTAGE_0_854V,
     AUD_316_XCORE_VOLTAGE_0_85V
-} xk_voice_sq66_xcore_voltage_t;
+} bsp_xcore_voltage_t;
 
 /** @}*/ // END: addtogroup xk_voice_sq66
 
@@ -71,14 +71,14 @@ typedef enum {
  *      This defines the number of audio channels per frame (a frame is a complete cycle of FSYNC or LRCLK).
  */
 typedef struct {
-    xk_voice_sq66_mclk_modes_t clk_mode;
+    bsp_mclk_modes_t clk_mode;
     char dac_is_clock_master;
     unsigned default_mclk;
     unsigned pll_sync_freq;
-    xk_voice_sq66_pcm_format_t pcm_format;
+    bsp_pcm_format_t pcm_format;
     unsigned i2s_n_bits;
     unsigned i2s_chans_per_frame;
-} xk_voice_sq66_config_t;
+} bsp_config_t;
 
 /**
  * \addtogroup xk_voice_sq66
@@ -93,7 +93,7 @@ typedef struct {
  *
  *  \param   i2c        client side of I2C master interface connection.
  */
-void xk_voice_sq66_i2c_master(SERVER_INTERFACE(i2c_master_if, i2c[1]));
+void bsp_i2c_master(SERVER_INTERFACE(i2c_master_if, i2c[1]));
 
 /** 
  * @brief Performs the required port operations to enable and the audio hardware on the platform. Must be called from tile[0]
@@ -101,7 +101,7 @@ void xk_voice_sq66_i2c_master(SERVER_INTERFACE(i2c_master_if, i2c[1]));
  *
  *  \param   config     Reference to the xk_voice_sq66_config_t configuration struct.
  */
-void xk_voice_sq66_board_setup(const REFERENCE_PARAM(xk_voice_sq66_config_t, config));
+void bsp_board_setup(const REFERENCE_PARAM(bsp_config_t, config));
 
 /** 
  * @brief Allows control of the xcore.ai core voltage independantly. Warning - use with caution. This is only supported when the 
@@ -110,7 +110,7 @@ void xk_voice_sq66_board_setup(const REFERENCE_PARAM(xk_voice_sq66_config_t, con
  *
  *  \param   voltage_setting     See xk_voice_sq66_xcore_voltage_t for options
  */
-void xk_voice_sq66_core_voltage_set(const xk_voice_sq66_xcore_voltage_t voltage_setting);
+void bsp_core_voltage_set(const bsp_xcore_voltage_t voltage_setting);
 
 /** 
  * @brief Initialises the audio hardware ready for a configuration. Must be called once *after* xk_voice_sq66_board_setup().
@@ -118,13 +118,13 @@ void xk_voice_sq66_core_voltage_set(const xk_voice_sq66_xcore_voltage_t voltage_
  *  \param   i2c        Client side of I2C master interface connection.
  *  \param   config     Reference to the xk_voice_sq66_config_t hardware configuration struct.
  */
-void xk_voice_sq66_AudioHwInit(CLIENT_INTERFACE(i2c_master_if, i2c), const REFERENCE_PARAM(xk_voice_sq66_config_t, config));
+void bsp_AudioHwInit(CLIENT_INTERFACE(i2c_master_if, i2c), const REFERENCE_PARAM(bsp_config_t, config));
 
 /** 
  * @brief Shuts down the audio hardware via I2C commands but keeps power rail on.
- * Use xk_voice_sq66_AudioHwShutdown() to remove power afterwards for minimum power.
+ * Use bsp_AudioHwShutdown() to remove power afterwards for minimum power.
  */
-void xk_voice_sq66_AudioHwShutdown(CLIENT_INTERFACE(i2c_master_if, i2c));
+void bsp_AudioHwShutdown(CLIENT_INTERFACE(i2c_master_if, i2c));
 
 /** 
  * @brief Powers down the audio hardware. Call xk_voice_sq66_AudioHwShutdown() first to avoid clicks/pops
@@ -132,7 +132,7 @@ void xk_voice_sq66_AudioHwShutdown(CLIENT_INTERFACE(i2c_master_if, i2c));
  * *after* this before attempting to configure the hardware with xk_voice_sq66_AudioHwConfig() again.
  * Must be called from tile[0]
  */
-void xk_voice_sq66_AudioHwPowerdown(void);
+void bsp_AudioHwPowerdown(void);
 
 /** 
  * @brief Configures the audio hardware following initialisation. This is typically called each time a sample rate or stream format change occurs.
@@ -145,8 +145,8 @@ void xk_voice_sq66_AudioHwPowerdown(void);
  *  \param   sampRes_DAC    The sample resolution of the DAC output in bits. Typically 16, 24 or 32.
  *  \param   sampRes_ADC    The sample resolution of the ADC input in bits. Typically 16, 24 or 32.
  */
-void xk_voice_sq66_AudioHwConfig(  CLIENT_INTERFACE(i2c_master_if, i2c),
-                                        const REFERENCE_PARAM(xk_voice_sq66_config_t, config),
+void bsp_AudioHwConfig(  CLIENT_INTERFACE(i2c_master_if, i2c),
+                                        const REFERENCE_PARAM(bsp_config_t, config),
                                         unsigned samFreq,
                                         unsigned mClk,
                                         unsigned dsdMode,
@@ -160,7 +160,7 @@ void xk_voice_sq66_AudioHwConfig(  CLIENT_INTERFACE(i2c_master_if, i2c),
  *
  *  \param   i2c     Client side of I2C master interface connection.
  */
-void xk_voice_sq66_i2c_master_exit(CLIENT_INTERFACE(i2c_master_if, i2c));
+void bsp_i2c_master_exit(CLIENT_INTERFACE(i2c_master_if, i2c));
 
 
 /** @}*/ // END: addtogroup xk_voice_sq66
