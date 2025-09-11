@@ -34,8 +34,11 @@
 /** Define representing XK-VOICE-SQ66 board */
 #define XK_VOICE_SQ66                6
 
+/** Define representing CSL HDMI Dongle spatial audio board*/
+#define CSL_HDMI_DONGLE             7
+
 /** Total number of boards supported by the library */
-#define BOARD_SUPPORT_N_BOARDS      7  // max board + 1
+#define BOARD_SUPPORT_N_BOARDS      8  // max board + 1
 
 /** Define that should be set to the current board type in use
   *
