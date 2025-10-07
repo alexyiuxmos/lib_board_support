@@ -11,6 +11,8 @@
 #include "xassert.h"
 #include "i2c.h"
 
+#include "tlv320aic3204.h"
+
 extern "C" {
     #include "sw_pll.h"
 }
@@ -179,6 +181,75 @@ void bsp_AudioHwInit(i2c_cli i2c, const bsp_config_t &config)
     // hardware DAC
     // Wait for power supply to come up.
     delay_milliseconds(100);
+    i2c_regop_res_t result;
+
+    // Wait for power supply to come up.
+    printf("configure DAC\n");
+    delay_milliseconds(100);
+
+    delay_milliseconds(2);                               
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PAGE_CTRL, 0x00);             // set register page to 0
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_SW_RST, 0x01);                // init sw reset, powered off PLL
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_NDAC, 0x81); 
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_MDAC, 0x84);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_NADC, 0x81);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_MADC, 0x84);         
+    delay_milliseconds(2);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_DOSR_LSB, 0x80);   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_AOSR, 0x80);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_CODEC_IF, 0x20);              
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_DAC_SIG_PROC, 0x01);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_ADC_SIG_PROC, 0x01);          
+    
+    // Select page 1
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PAGE_CTRL, 0x01);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_LDO_CTRL, 0x09);       
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PWR_CFG, 0x08);        
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_LDO_CTRL, 0x01);       
+    
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_CM_CTRL, 0x33);        
+    
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PLAY_CFG1, 0x00);      
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PLAY_CFG2, 0x00);      
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_ADC_PTM, 0x00);        
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_AN_IN_CHRG, 0x31);     
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_REF_STARTUP, 0x01);    
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_HP_START, 0x25);       
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_HPL_ROUTE, 0x08);      
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_HPR_ROUTE, 0x08);      
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x0e, 0x08);                   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x0f, 0x08);                   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x12, 0x3a);                   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x13, 0x3a);                   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_LPGA_P_ROUTE, 0x20);   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_LPGA_N_ROUTE, 0x20);   
+//    delay_milliseconds(100);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_RPGA_P_ROUTE, 0x80);   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_RPGA_N_ROUTE, 0x20);   
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_HPL_GAIN, 0x06);       
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_HPR_GAIN, 0x06);       
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_LPGA_VOL, 0x00);       
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_RPGA_VOL, 0x00);       
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_OP_PWR_CTRL, 0x30);    
+    delay_milliseconds(10);
+
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PAGE_CTRL, 0x00);      
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_DAC_CH_SET1, 0xd4);    
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_ADC_CH_SET, 0xc0);     
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_DAC_CH_SET2, 0x00);    
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_ADC_FGA_MUTE, 0x00);   
+    
+    // adc_2ch_48k_high_performance
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PAGE_CTRL, 0x01);      
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x47, 0x32);                
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x7b, 0x01); 
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x33, 0x60);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x37, 0x80);
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x39, 0x20);         
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x3c, 40);           
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PAGE_CTRL, 0x00); 
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x51, 0xc0); 
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, 0x52, 0x00);
 
     printf("configure DAC done\n");
 }
