@@ -230,7 +230,9 @@ void bsp_AudioHwInit(i2c_cli i2c, const bsp_config_t &config)
     WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_HPR_GAIN, 0x06);       
     WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_LPGA_VOL, 0x00);       
     WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_RPGA_VOL, 0x00);       
-    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_OP_PWR_CTRL, 0x30);    
+//    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_OP_PWR_CTRL, 0x30);    
+    WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_OP_PWR_CTRL, 0x0C);    
+    
     delay_milliseconds(10);
 
     WriteRegs(i2c, AIC3204_I2C_DEVICE_ADDR, 1, AIC3204_PAGE_CTRL, 0x00);      
